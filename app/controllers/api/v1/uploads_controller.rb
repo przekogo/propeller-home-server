@@ -6,7 +6,6 @@ module Api
       skip_before_action :verify_authenticity_token
       def index
         render json: Upload.all.order(created_at: :desc)
-        # render json: ActiveModelSerializers::SerializableResource.new(uploads, each_serializer: UploadSerializer)
       end
 
       def create
