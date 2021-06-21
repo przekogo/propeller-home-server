@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-class UploadsForm extends Component {
+class UploadsCreate extends Component {
   constructor(props,
   ) {
     super(props);
@@ -16,7 +16,10 @@ class UploadsForm extends Component {
       body: body,
     };
     fetch(url, options)
-        .then((response) => response.json());
+        .then((response) => response.json())
+        .then(() => {
+          this.props.parentCallback();
+        });
   }
 
   render() {
@@ -29,4 +32,4 @@ class UploadsForm extends Component {
   }
 }
 
-export default UploadsForm;
+export default UploadsCreate;

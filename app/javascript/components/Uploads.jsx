@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import UploadsForm from './UploadsForm';
+import UploadsCreate from './UploadsCreate';
 
 class Uploads extends Component {
   constructor(props) {
@@ -7,41 +7,80 @@ class Uploads extends Component {
     this.state = {
       uploads: [],
     };
+
+    this.handleUploadDelete = this.handleUploadDelete.bind(this);
+    this.uploadComplete = this.uploadComplete.bind(this);
+    this.downloadFile = this.downloadFile.bind(this);
   }
 
-  componentDidMount() {
+  handleUploadDelete(uploadId) {
+    if (!window.confirm('Are you sure you want to delete?')) {
+      return;
+    }
+
+    const url = 'api/v1/uploads/' + uploadId;
+    const options = {method: 'DELETE'};
+    fetch(url, options)
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw new Error('bad response');
+        })
+        .then(() => this.fetchUploads())
+        .catch((error) => console.log(error));
+  }
+
+  downloadFile(event) {
+    if (event.target.classList.contains('button-delete')) {
+      event.preventDefault();
+    }
+  }
+
+  fetchUploads() {
     const url = 'api/v1/uploads';
     fetch(url)
         .then((response) => {
           if (response.ok) {
             return response.json();
           }
-          throw new Error('asd');
+          throw new Error('bad response');
         })
         .then((response) => this.setState({uploads: response}))
         .catch((error) => console.log(error));
+  }
 
-    // try {
-    //   const response = await fetch(url);
-    //   this.setState({uploads: response.json()});
-    // } catch (error) {
-    //   console.log(error);
-    // }
+  uploadComplete() {
+    this.fetchUploads();
+  }
+
+  componentDidMount() {
+    this.fetchUploads();
   }
   render() {
     const {uploads} = this.state;
-    console.log(uploads.length);
     const allUploads = uploads.map((element, index) => (
-      <div key={element.id} className="upload-entry">
-        <div className="upload-entry-index">
+      <a
+        href={element.file_url}
+        key={element.id}
+        className="uploads-entry"
+        onClick={(e) => this.downloadFile(e)}
+      >
+        <div className="uploads-entry-index">
           {index+1}
         </div>
-        <div className="upload-entry-download">
-          <a href={element.file_url}>
-            {element.filename}
-          </a>
+        <div className="uploads-entry-download">
+          {element.file_name}
         </div>
-      </div>
+        <div className="uploads-entry-size">
+          {element.file_size}
+        </div>
+        <div className="uploads-entry-delete">
+          <div className="button-delete" onClick={() => this.handleUploadDelete(element.id)}>
+            delet
+          </div>
+        </div>
+      </a>
     ));
 
     return (
@@ -49,7 +88,7 @@ class Uploads extends Component {
         <h1>
           Propeller Home Server
         </h1>
-        <UploadsForm />
+        <UploadsCreate parentCallback={this.uploadComplete}/>
         <div>{allUploads}</div>
       </div>
     );

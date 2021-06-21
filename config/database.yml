@@ -82,5 +82,4 @@ test:
 production:
   <<: *default
   database: propeller_home_server_production
-  username: propeller_home_server
-  password: <%= ENV['PROPELLER_HOME_SERVER_DATABASE_PASSWORD'] %>
+  username: <%= ENV['PROPELLER_HOME_SERVER_DATABASE_USERNAME'] %>

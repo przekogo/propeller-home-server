@@ -16,8 +16,7 @@ module Api
       def show; end
 
       def destroy
-        upload.destroy
-        render json: { message: 'Deletering successful' }
+        render json: upload.destroy!
       end
 
       private
