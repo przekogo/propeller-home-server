@@ -5,7 +5,7 @@ module Api
     class UploadsController < ApplicationController
       skip_before_action :verify_authenticity_token
       def index
-        render json: Upload.all.order(created_at: :desc)
+        render json: Upload.all.order(created_at: :desc).with_attached_file
       end
 
       def create
